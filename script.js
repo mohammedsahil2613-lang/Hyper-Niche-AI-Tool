@@ -1,6 +1,6 @@
 let isPremium = false;
 
-// Check if client already paid (after PayPal return)
+// Check if client already paid
 if (window.location.search.includes("paid=true")) {
   isPremium = true;
   alert("Payment successful ✅ Premium unlocked");
