@@ -6,7 +6,7 @@ const unlockCode = document.getElementById("adminCode");
 
 let isPremium = false;
 
-// Admin/CEO free unlock
+// Admin / CEO free unlock
 unlockBtn.addEventListener("click", function () {
   const code = unlockCode.value.trim();
 
