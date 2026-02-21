@@ -1,31 +1,23 @@
-export default async function handler(req, res) {
+import OpenAI from "openai";
 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+export default async function handler(req, res) {
   const { topic } = req.body;
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
+  if (!topic) return res.status(400).json({ error: "Topic required" });
+
+  try {
+    const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are a premium viral content generator."
-        },
-        {
-          role: "user",
-          content: `Create high quality viral content about: ${topic}`
-        }
-      ]
-    })
-  });
+      messages: [{ role: "user", content: `Create viral content for: ${topic}` }],
+      temperature: 0.7
+    });
 
-  const data = await response.json();
-
-  res.status(200).json({
-    content: data.choices[0].message.content
-  });
+    const content = completion.choices[0].message.content;
+    res.status(200).json({ content });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "OpenAI error" });
+  }
 }
