@@ -1,43 +1,43 @@
-const generateBtn = document.getElementById("generateBtn");
-const output = document.getElementById("output");
-const topic = document.getElementById("topic");
-const copyBtn = document.getElementById("copyBtn");
-const payBtn = document.getElementById("payBtn");
-const adminCode = document.getElementById("adminCode");
+let isPremium = false;
 
-let unlocked = false;
+// Check if client already paid (after PayPal return)
+if (window.location.search.includes("paid=true")) {
+  isPremium = true;
+  alert("Payment successful ✅ Premium unlocked");
+}
 
-generateBtn.addEventListener("click", async () => {
+// Unlock button
+document.getElementById("unlockBtn").addEventListener("click", function () {
+  const code = document.getElementById("unlockCode").value.trim();
 
-  if (!unlocked) {
+  // 🔐 YOUR PRIVATE FREE ACCESS
+  if (code === "sahil599") {
+    isPremium = true;
+    alert("Admin access granted ✅");
+    return;
+  }
+
+  // 💳 CLIENT PAYMENT
+  window.location.href = "/api/create-order";
+});
+
+// Generate Content
+document.getElementById("generateBtn").addEventListener("click", async function () {
+  if (!isPremium) {
     alert("Please unlock premium first.");
     return;
   }
 
-  output.value = "Generating...";
+  const topic = document.getElementById("topicInput").value;
 
-  const res = await fetch("/api/generate", {
+  const response = await fetch("/api/generate", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ topic: topic.value })
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ topic })
   });
 
-  const data = await res.json();
-  output.value = data.content;
-});
-
-copyBtn.addEventListener("click", () => {
-  navigator.clipboard.writeText(output.value);
-  alert("Copied!");
-});
-
-payBtn.addEventListener("click", () => {
-
-  if (adminCode.value === "sahil599") {
-    unlocked = true;
-    alert("Admin access granted.");
-    return;
-  }
-
-  window.location.href = "https://www.paypal.com/paypalme/YOURPAYPALUSERNAME/1";
+  const data = await response.json();
+  document.getElementById("output").innerText = data.content;
 });
