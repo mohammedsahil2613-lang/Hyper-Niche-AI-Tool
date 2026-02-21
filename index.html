@@ -1,21 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hyper-Niche AI Tool</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hyper‑Niche AI Tool</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<h1>Hyper-Niche AI Tool</h1>
 
-<input type="text" id="topicInput" placeholder="Enter topic">
-<button id="generateBtn">Generate Content</button>
-<button id="demoBtn">Demo Content</button>
+  <!-- Background Video -->
+  <video autoplay muted loop id="bgVideo">
+    <source src="background.mp4" type="video/mp4">
+  </video>
 
-<div id="output">Your content will appear here...</div>
+  <div class="overlay"></div>
 
-<button id="copyBtn">Copy Content</button>
+  <div class="container">
+
+    <h1>Hyper‑Niche AI Tool</h1>
+    <p class="tagline">Your $1 = 1 Premium AI‑Generated Viral Content</p>
+
+    <input type="text" id="topic" placeholder="Enter your topic..." />
+    
+    <button id="generateBtn">Generate Content</button>
+
+    <textarea id="output" placeholder="Your content will appear here..." readonly></textarea>
+
+    <button id="copyBtn">Copy Content</button>
+
+    <div class="payment">
+      <button id="payBtn">Unlock Premium ($1)</button>
+      <input type="text" id="adminCode" placeholder="Admin code (optional)">
+    </div>
+
+    <p class="footer">
+      Built for the future. Powered by next‑gen AI.
+    </p>
+
+  </div>
 
 <script src="script.js"></script>
 </body>
