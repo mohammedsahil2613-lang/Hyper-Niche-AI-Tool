@@ -1,8 +1,3 @@
-// ===================
-// Hyper-Niche AI Tool
-// Final working script
-// ===================
-
 const topicInput = document.getElementById("topic");
 const generateBtn = document.getElementById("generateBtn");
 const outputArea = document.getElementById("output");
@@ -11,24 +6,17 @@ const unlockCode = document.getElementById("adminCode");
 
 let isPremium = false;
 
-// Check if client already paid
-if (window.location.search.includes("paid=true")) {
-  isPremium = true;
-  alert("Payment successful ✅ Premium unlocked");
-}
-
-// Unlock button
+// Admin/CEO free unlock
 unlockBtn.addEventListener("click", function () {
   const code = unlockCode.value.trim();
 
-  // ✅ CEO/Admin free access
   if (code === "sahil599") {
     isPremium = true;
     alert("Admin access granted ✅");
     return;
   }
 
-  // 💳 Client payment
+  // Client payment
   window.location.href = "/api/create-order";
 });
 
