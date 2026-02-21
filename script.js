@@ -10,7 +10,7 @@ if (window.location.search.includes("paid=true")) {
 document.getElementById("unlockBtn").addEventListener("click", function () {
   const code = document.getElementById("unlockCode").value.trim();
 
-  // 🔐 YOUR PRIVATE FREE ACCESS
+  // 🔐 ADMIN FREE ACCESS
   if (code === "sahil599") {
     isPremium = true;
     alert("Admin access granted ✅");
@@ -21,7 +21,7 @@ document.getElementById("unlockBtn").addEventListener("click", function () {
   window.location.href = "/api/create-order";
 });
 
-// Generate Content
+// Generate Content button
 document.getElementById("generateBtn").addEventListener("click", async function () {
   if (!isPremium) {
     alert("Please unlock premium first.");
@@ -32,12 +32,10 @@ document.getElementById("generateBtn").addEventListener("click", async function 
 
   const response = await fetch("/api/generate", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ topic })
   });
 
   const data = await response.json();
-  document.getElementById("output").innerText = data.content;
+  document.getElementById("output").value = data.content;
 });
