@@ -1,7 +1,9 @@
+// script.js
+
 const generateBtn = document.getElementById("generateBtn");
 const output = document.getElementById("output");
 const copyBtn = document.getElementById("copyBtn");
-const payBtnContainer = document.getElementById("payBtnContainer"); // new div for PayPal button
+const payBtnContainer = document.getElementById("payBtnContainer");
 const topicInput = document.getElementById("topic");
 const adminCodeInput = document.getElementById("adminCode");
 
@@ -33,15 +35,16 @@ copyBtn.addEventListener("click", () => {
 });
 
 // Admin Unlock
-const adminCode = adminCodeInput.value.trim();
-if (adminCode === "sahil599") {
-  alert("Unlocked as Admin!");
-}
+adminCodeInput.addEventListener("change", () => {
+  const code = adminCodeInput.value.trim();
+  if (code === "sahil599") {
+    alert("Unlocked as Admin!");
+  }
+});
 
 // PayPal Button
 paypal.Buttons({
   createOrder: async function (data, actions) {
-    // Call your backend to create order
     const res = await fetch("/api/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -52,7 +55,6 @@ paypal.Buttons({
     else throw new Error(dataResp.message);
   },
   onApprove: async function (data, actions) {
-    // Capture / verify payment
     const res = await fetch("/api/verifyPayment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,4 +68,4 @@ paypal.Buttons({
     console.error(err);
     alert("Payment failed.");
   }
-}).render("#payBtnContainer"); // Make sure your HTML has <div id="payBtnContainer"></div>
+}).render("#payBtnContainer"); // Renders PayPal button
