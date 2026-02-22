@@ -1,9 +1,9 @@
 export default function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
-  const { code } = req.body;
+  const { code, paymentApproved } = req.body;
 
-  // ✅ Developer/test code: free content
+  // ✅ Test code Sahil599 → free content
   if (code === "Sahil599") {
     const aiContents = [
       "🔥 AI Viral Content #1",
@@ -14,14 +14,12 @@ export default function handler(req, res) {
     return res.status(200).json({ content });
   }
 
-  // ✅ Normal users must pay $1 first
-  // Check if order is approved / paid via PayPal
-  const { paymentApproved } = req.body; // sent from frontend after PayPal
+  // ✅ Normal users must pay $1
   if (!paymentApproved) {
     return res.status(403).json({ error: "Please pay $1 to generate content" });
   }
 
-  // If paid → generate content
+  // ✅ Paid users → generate content
   const aiContents = [
     "🔥 AI Viral Content #1",
     "💡 AI Viral Content #2",
