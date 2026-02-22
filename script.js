@@ -38,3 +38,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+// Load after PayPal SDK
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{ amount: { value: '1.00' } }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      // Payment completed → generate AI content
+      fetch("/api/generate", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("content-container").innerHTML = `<p>${data.content}</p>`;
+        });
+    });
+  }
+}).render('#paypal-button-container');
