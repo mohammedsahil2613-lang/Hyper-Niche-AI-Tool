@@ -79,3 +79,14 @@ paypal.Buttons({
 }).render('#paypal-button-container');
 // Get the code sent from the front-end
 const { code } = req.body;
+const code = document.getElementById("test-code-input").value;
+
+fetch("/api/generate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ code })
+})
+.then(res => res.json())
+.then(data => {
+  document.getElementById("content-container").innerHTML = `<p>${data.content}</p>`;
+});
