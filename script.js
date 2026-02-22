@@ -80,13 +80,22 @@ paypal.Buttons({
 // Get the code sent from the front-end
 const { code } = req.body;
 const code = document.getElementById("test-code-input").value;
+export default function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).end();
 
-fetch("/api/generate", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ code })
-})
-.then(res => res.json())
-.then(data => {
-  document.getElementById("content-container").innerHTML = `<p>${data.content}</p>`;
-});
+  const { code } = req.body; // ✅ this is backend only
+
+  // Test code Sahil599 → free content
+  if (code === "Sahil599") {
+    const aiContents = [
+      "🔥 AI Viral Content #1",
+      "💡 AI Viral Content #2",
+      "🚀 AI Viral Content #3"
+    ];
+    const content = aiContents[Math.floor(Math.random() * aiContents.length)];
+    return res.status(200).json({ content });
+  }
+
+  // Otherwise, handle PayPal or error
+  return res.status(403).json({ error: "Payment required or invalid code" });
+}
