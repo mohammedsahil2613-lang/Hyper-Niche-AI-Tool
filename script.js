@@ -1,101 +1,56 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const button = document.getElementById("buy-btn");
-  const contentContainer = document.getElementById("content-container");
+// Generate Content button (Sahil599 test code OR topic input)
+document.getElementById("generate-btn").addEventListener("click", async () => {
+  const code = document.getElementById("test-code-input").value.trim();
+  const topic = document.getElementById("topic").value.trim();
+  const output = document.getElementById("output");
 
-  button.addEventListener("click", async () => {
-    button.disabled = true;
-    button.innerText = "Processing…";
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, topic })
+    });
 
-    try {
-      // 1️⃣ Simulate order creation
-      const orderRes = await fetch("/api/create-order", { method: "POST" });
-      const orderData = await orderRes.json();
+    const data = await res.json();
 
-      // 2️⃣ Simulate payment verification
-      const verifyRes = await fetch("/api/verifyPayment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderID: orderData.id }),
-      });
-      const verifyData = await verifyRes.json();
-
-      if (verifyData.status === "COMPLETED") {
-        // 3️⃣ Generate AI content
-        const aiRes = await fetch("/api/generate", { method: "POST" });
-        const aiData = await aiRes.json();
-
-        // 4️⃣ Display content
-        contentContainer.innerHTML = `<p>${aiData.content}</p>`;
-      } else {
-        alert("Payment failed (simulated). Try again.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error generating content.");
-    } finally {
-      button.disabled = false;
-      button.innerText = "Buy Content $1";
-    }
-  });
+    output.value = data.content || data.error || "No content generated.";
+  } catch (err) {
+    output.value = "Error generating content.";
+    console.error(err);
+  }
 });
-// Load after PayPal SDK
+
+// Copy Content button
+document.getElementById("copy-btn").addEventListener("click", () => {
+  const output = document.getElementById("output");
+  output.select();
+  navigator.clipboard.writeText(output.value);
+  alert("Content copied!");
+});
+
+// PayPal button for $1 payment
 paypal.Buttons({
   createOrder: function(data, actions) {
-    return actions.order.create({
-      purchase_units: [{ amount: { value: '1.00' } }]
-    });
+    return actions.order.create({ purchase_units: [{ amount: { value: '1.00' } }] });
   },
   onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      // Payment completed → generate AI content
-      fetch("/api/generate", { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("content-container").innerHTML = `<p>${data.content}</p>`;
+    return actions.order.capture().then(async function(details) {
+      const topic = document.getElementById("topic").value.trim();
+      const output = document.getElementById("output");
+
+      try {
+        const res = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: "", topic })
         });
+
+        const data = await res.json();
+        output.value = data.content || "No content generated.";
+      } catch (err) {
+        output.value = "Error generating content after payment.";
+        console.error(err);
+      }
     });
   }
 }).render('#paypal-button-container');
-paypal.Buttons({
-  createOrder: function(data, actions) {
-    return actions.order.create({
-      purchase_units: [{ amount: { value: '1.00' } }]
-    });
-  },
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      // Payment completed → generate AI content
-      fetch("/api/generate", { method: "POST" })
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("content-container").innerHTML = `<p>${data.content}</p>`;
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("content-container").innerHTML = `<p>Error generating content.</p>`;
-        });
-    });
-  }
-}).render('#paypal-button-container');
-// Get the code sent from the front-end
-const { code } = req.body;
-const code = document.getElementById("test-code-input").value;
-export default function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end();
-
-  const { code } = req.body; // ✅ this is backend only
-
-  // Test code Sahil599 → free content
-  if (code === "Sahil599") {
-    const aiContents = [
-      "🔥 AI Viral Content #1",
-      "💡 AI Viral Content #2",
-      "🚀 AI Viral Content #3"
-    ];
-    const content = aiContents[Math.floor(Math.random() * aiContents.length)];
-    return res.status(200).json({ content });
-  }
-
-  // Otherwise, handle PayPal or error
-  return res.status(403).json({ error: "Payment required or invalid code" });
-}
