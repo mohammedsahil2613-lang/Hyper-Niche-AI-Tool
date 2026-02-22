@@ -1,18 +1,16 @@
-// Simulated AI content generator
 export default function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
-  // Example AI logic: random content generation
-  const aiContents = [
-    "AI-generated content #1: Hello, world!",
-    "AI-generated content #2: Your daily AI tip!",
-    "AI-generated content #3: Creative idea from AI!",
-    "AI-generated content #4: Automatic content generation!",
-    "AI-generated content #5: Surprise AI content!"
+  // AI logic: Random viral content
+  const contents = [
+    "🔥 AI Viral Content #1: Boost your engagement!",
+    "💡 AI Viral Content #2: Trending idea for social media!",
+    "🚀 AI Viral Content #3: Your next viral post!",
+    "✨ AI Viral Content #4: Premium AI-generated content!",
+    "⚡ AI Viral Content #5: Instant viral content!"
   ];
 
-  // Randomly pick one
-  const content = aiContents[Math.floor(Math.random() * aiContents.length)];
+  const content = contents[Math.floor(Math.random() * contents.length)];
 
   res.status(200).json({ content });
 }
