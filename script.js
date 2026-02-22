@@ -79,19 +79,3 @@ paypal.Buttons({
 }).render('#paypal-button-container');
 // Get the code sent from the front-end
 const { code } = req.body;
-
-// If the code is Sahil599, bypass payment and generate content
-if (code === "Sahil599") {
-  const aiContents = [
-    "🔥 AI Viral Content #1",
-    "💡 AI Viral Content #2",
-    "🚀 AI Viral Content #3",
-    "✨ AI Viral Content #4",
-    "⚡ AI Viral Content #5"
-  ];
-
-  const content = aiContents[Math.floor(Math.random() * aiContents.length)];
-
-  // Return content to front-end
-  return res.status(200).json({ content });
-}
