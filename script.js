@@ -54,3 +54,16 @@ paypal.Buttons({
     });
   }
 }).render('#paypal-button-container');
+document.getElementById("generate-btn").addEventListener("click", async () => {
+  const prompt = document.getElementById("prompt-input").value;
+  const code = document.getElementById("code-input")?.value || "";
+  const paymentApproved = true; // Replace with actual payment verification
+
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt, code, paymentApproved }),
+  });
+  const data = await res.json();
+  document.getElementById("output").innerText = data.content || data.error;
+});
