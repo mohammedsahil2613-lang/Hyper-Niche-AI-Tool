@@ -1,69 +1,23 @@
-// Generate Content button (Sahil599 test code OR topic input)
-document.getElementById("generate-btn").addEventListener("click", async () => {
-  const code = document.getElementById("test-code-input").value.trim();
-  const topic = document.getElementById("topic").value.trim();
-  const output = document.getElementById("output");
+const generateBtn = document.getElementById("generate-btn");
+const outputEl = document.getElementById("output");
 
+generateBtn.addEventListener("click", async () => {
   try {
-    const res = await fetch("/api/generate", {
+    const promptInput = document.getElementById("prompt-input");
+    if (!promptInput) throw new Error("Prompt input not found");
+
+    const response = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, topic })
+      body: JSON.stringify({ prompt: promptInput.value }),
     });
 
-    const data = await res.json();
+    if (!response.ok) throw new Error("API request failed");
 
-    output.value = data.content || data.error || "No content generated.";
+    const data = await response.json();
+    outputEl.innerText = data.result || "No result";
   } catch (err) {
-    output.value = "Error generating content.";
     console.error(err);
+    outputEl.innerText = `Error: ${err.message}`;
   }
-});
-
-// Copy Content button
-document.getElementById("copy-btn").addEventListener("click", () => {
-  const output = document.getElementById("output");
-  output.select();
-  navigator.clipboard.writeText(output.value);
-  alert("Content copied!");
-});
-
-// PayPal button for $1 payment
-paypal.Buttons({
-  createOrder: function(data, actions) {
-    return actions.order.create({ purchase_units: [{ amount: { value: '1.00' } }] });
-  },
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(async function(details) {
-      const topic = document.getElementById("topic").value.trim();
-      const output = document.getElementById("output");
-
-      try {
-        const res = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code: "", topic })
-        });
-
-        const data = await res.json();
-        output.value = data.content || "No content generated.";
-      } catch (err) {
-        output.value = "Error generating content after payment.";
-        console.error(err);
-      }
-    });
-  }
-}).render('#paypal-button-container');
-document.getElementById("generate-btn").addEventListener("click", async () => {
-  const prompt = document.getElementById("prompt-input").value;
-  const code = document.getElementById("code-input")?.value || "";
-  const paymentApproved = true; // Replace with actual payment verification
-
-  const res = await fetch("/api/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, code, paymentApproved }),
-  });
-  const data = await res.json();
-  document.getElementById("output").innerText = data.content || data.error;
 });
